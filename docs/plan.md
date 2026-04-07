@@ -66,13 +66,15 @@ BEEBOT/src/kernel/     ✅  Plugin + Container + BeeBotApp — паттерн д
 
 Цель: AgentForge запускается, принимает задачу, возвращает ConsensusReport.
 
-- [ ] Переименовать `src/team_infra/` → `src/agentforge/` + обновить `pyproject.toml`
-- [ ] `src/agentforge/kernel/plugin.py` — abstract RolePlugin (адаптировать из BEEBOT kernel)
-- [ ] `src/agentforge/kernel/container.py` — DI-контейнер (перенести из BEEBOT)
-- [ ] `src/agentforge/kernel/app.py` — AgentForgeApp: register() + топосортировка + run()
-- [ ] `src/agentforge/coordinator.py` — запуск пайплайна ролей → ConsensusReport
-- [ ] `src/agentforge/__init__.py` — экспорт: AgentForge, Gift, AgentBus, ProjectContext
-- [ ] `tests/test_coordinator.py` — coordinator принимает task → ConsensusReport, human_decision_required=True
+- [x] Переименовать `src/team_infra/` → `src/agentforge/` + обновить `pyproject.toml`
+- [x] `src/agentforge/kernel/plugin.py` — abstract RolePlugin (адаптировать из BEEBOT kernel)
+- [x] `src/agentforge/kernel/container.py` — DI-контейнер (перенести из BEEBOT)
+- [x] `src/agentforge/kernel/app.py` — AgentForgeApp: register() + топосортировка + run()
+- [x] `src/agentforge/coordinator.py` — запуск пайплайна ролей → ConsensusReport
+- [x] `src/agentforge/__init__.py` — экспорт: AgentForge, Gift, AgentBus, ProjectContext
+- [x] `tests/test_coordinator.py` — coordinator принимает task → ConsensusReport, human_decision_required=True
+
+**✅ ЗАВЕРШЕНА 07.04.2026 — 9/9 тестов зелёных**
 
 **Выход фазы:** `AgentForge.run(task, context)` → ConsensusReport (без реальных ролей, mock)
 

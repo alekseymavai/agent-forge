@@ -9,35 +9,41 @@
 Мы разрабатываем **AgentForge** — переиспользуемую инфраструктуру команды AI-агентов-разработчиков на онтологии дара (PLM-GIFT).
 
 **Телос:**
-> «Когда Андрей говорит "создаём новый проект" — команда с памятью уже работает.»
+> «Когда Алексей говорит "создаём новый проект" — команда с памятью уже работает.»
 
-**Продукт завода:** программный проект (код + архитектура + тесты), созданный командой ролей по Gift Protocol. Финальное решение — всегда за Андреем (`human_decision_required: True`).
+**Продукт завода:** программный проект (код + архитектура + тесты), созданный командой ролей по Gift Protocol. Финальное решение — всегда за Алексеем (`human_decision_required: True`).
 
 ---
 
 ## Что было сделано в предыдущей сессии (07.04.2026)
 
-### Решения принятые командой (ConsensusReport):
+### Фаза 1 — ЗАВЕРШЕНА ✅
 
 **ADR-001:** Role = RolePlugin (микроядро), не AgentBase напрямую.
-Роли должны быть заменяемы под проект. Plugin даёт lifecycle + DI + топосортировку.
+**ADR-002:** Переименовано `team_infra` → `agentforge`.
 
-**ADR-002:** Переименовать `team-infra` / `team_infra` → `agentforge`.
+### Что реализовано:
+```
+src/agentforge/__init__.py          ✅  публичный API
+src/agentforge/gift.py              ✅  Gift dataclass, Freedom enum
+src/agentforge/agent_bus.py         ✅  файловая шина inbox/outbox/log
+src/agentforge/agent_core.py        ✅  AgentBase ABC, ROLE_WEIGHTS
+src/agentforge/project_context.py   ✅  ProjectContext.load() из context.yaml
+src/agentforge/kernel/plugin.py     ✅  abstract RolePlugin
+src/agentforge/kernel/container.py  ✅  DI-контейнер
+src/agentforge/kernel/app.py        ✅  AgentForgeApp: register + тoposort + setup/teardown
+src/agentforge/coordinator.py       ✅  Coordinator → ConsensusReport
+tests/test_coordinator.py           ✅  4 теста (9 всего)
+pyproject.toml                      ✅  name=agentforge, build_meta backend
+```
 
-### Что уже реализовано:
-```
-src/team_infra/gift.py            ✅  Gift dataclass, Freedom enum
-src/team_infra/agent_bus.py       ✅  файловая шина inbox/outbox/log
-src/team_infra/agent_core.py      ✅  AgentBase ABC, ROLE_WEIGHTS
-src/team_infra/project_context.py ✅  ProjectContext.load() из context.yaml
-tests/test_gift.py                ✅
-tests/test_agent_bus.py           ✅
-```
+Критерий Фазы 1 выполнен:
+- `AgentForge.run(task)` → ConsensusReport, `human_decision_required=True`
+- Security DECLINED → `blocked=True`, `security_status=RED`
 
 ### Что нужно сделать (план в `docs/plan.md`):
 ```
-Фаза 1 (2д): kernel/ + coordinator.py  ← СЛЕДУЮЩИЙ ШАГ
-Фаза 2 (3д): roles/ — Scout, Architect, Security
+Фаза 2 (3д): roles/ — Scout, Architect, Security  ← СЛЕДУЮЩИЙ ШАГ
 Фаза 3 (2д): memory/team_memory.py — Integram devteam
 Фаза 4 (1д): templates/context.yaml + cli.py
 Фаза 5 (2д): оставшиеся 6 ролей
@@ -48,10 +54,10 @@ tests/test_agent_bus.py           ✅
 
 ## Первые действия в новой сессии
 
-1. Прочитать `docs/plan.md` — план с задачами по фазам
-2. Прочитать `docs/architecture.md` — структура пакета и пайплайн
-3. Прочитать `src/team_infra/gift.py` и `agent_core.py` — что уже есть
-4. Запустить команду Scout: проверить текущее состояние кода
+1. Прочитать `docs/plan.md` — найти первую незакрытую задачу Фазы 2
+2. Прочитать `docs/architecture.md` — структура roles/ и пайплайн
+3. Прочитать договоры ролей в `BEEBOT/docs/agents/scout.md`, `architect.md`, `security.md`
+4. Реализовать роли по ADR-001 (RolePlugin, не AgentBase)
 
 ---
 
@@ -59,9 +65,9 @@ tests/test_agent_bus.py           ✅
 
 **Микроядро (Plugin + Container + App):**
 ```
-/home/hive/BEEBOT/src/kernel/plugin.py
-/home/hive/BEEBOT/src/kernel/container.py
-/home/hive/BEEBOT/src/kernel/app.py
+src/agentforge/kernel/plugin.py     ← уже адаптировано
+src/agentforge/kernel/container.py  ← уже адаптировано
+src/agentforge/kernel/app.py        ← уже адаптировано
 ```
 
 **Договоры ролей (9 файлов):**
@@ -82,7 +88,7 @@ tests/test_agent_bus.py           ✅
 ## Требования Security (учесть при реализации)
 
 - `INTEGRAM_DEVTEAM_TOKEN` — отдельная env переменная (не токен bibot)
-- `.agent_bus/` — в `.gitignore`
+- `.agent_bus/` — в `.gitignore` ✅
 - `context.yaml` — только `${ENV_VAR}`, никаких секретов в файле
 - CLI: API_KEY только из `os.environ`, не из аргументов командной строки
 
@@ -93,7 +99,7 @@ tests/test_agent_bus.py           ✅
 Перед каждой нетривиальной задачей — прогон по ролям (имитация или реальные субагенты):
 
 ```
-Product Owner → Scout → Architect → Security → ConsensusReport → Андрей решает
+Product Owner → Scout → Architect → Security → ConsensusReport → Алексей решает
 ```
 
 После реализации:
@@ -102,24 +108,26 @@ QA → Security → DevOps → TechWriter
 ```
 
 Каждая роль имеет договор в `/home/hive/BEEBOT/docs/agents/<role>.md`.
-Используй их как системные промты при смене шляп.
 
 ---
 
-## Критерий готовности Фазы 1
+## Критерий готовности Фазы 2
 
 ```python
-from agentforge import AgentForge
+# Первый живой прогон Scout → Architect → Security
+app = AgentForgeApp()
+app.register(ScoutPlugin())     # читает код, возвращает карту
+app.register(ArchitectPlugin()) # предлагает 2 варианта
+app.register(SecurityPlugin())  # атакует варианты
 
-forge = AgentForge.load("docs/memory/context.yaml")
-report = await forge.run("Спроектируй модуль X")
+coordinator = Coordinator(app, telos="...")
+report = await coordinator.run("Спроектируй модуль X")
 
-assert report.human_decision_required == True
-assert report.recommendation != ""
+assert report.security_status in ("GREEN", "YELLOW", "RED")
+assert len(report.gifts) == 3
 ```
 
 ---
 
 *Файл: docs/session_prompt.md*
-*Создан: 07.04.2026*
-*Обновлять после каждой значимой сессии*
+*Обновлён: 07.04.2026 — Фаза 1 завершена*
