@@ -1,9 +1,9 @@
 [build-system]
 requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
-name = "team-infra"
+name = "agentforge"
 version = "0.1.0"
 description = "AgentForge — универсальная команда AI-агентов-разработчиков на онтологии дара"
 readme = "README.md"
@@ -29,6 +29,9 @@ dev = [
     "ruff>=0.4",
     "mypy>=1.10",
 ]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.ruff]
 line-length = 100
