@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "team-infra"
+version = "0.1.0"
+description = "AgentForge — универсальная команда AI-агентов-разработчиков на онтологии дара"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [
+    { name = "Andrey Gavrilov", email = "gaveron18@github.com" },
+    { name = "Aleksey Mavai", email = "alekseymavai@github.com" },
+]
+keywords = ["agents", "ai", "team", "gift-ontology", "multi-agent"]
+
+dependencies = [
+    "httpx>=0.27",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "aiofiles>=23.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.4",
+    "mypy>=1.10",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
