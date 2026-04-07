@@ -100,13 +100,17 @@ BEEBOT/src/kernel/     ✅  Plugin + Container + BeeBotApp — паттерн д
 
 Цель: опыт сохраняется между сессиями и проектами.
 
-- [ ] Создать воркспейс `devteam` в Integram (отдельный от `bibot`)
+- [x] Создать воркспейс `devteam` в Integram (отдельный от `bibot`) — id:14, slug:devteam
 - [ ] `INTEGRAM_DEVTEAM_TOKEN` — отдельная env переменная (требование Security)
-- [ ] Создать таблицы: `PATTERNS`, `ANTIPATTERNS`, `DECISIONS`, `LESSONS`, `TASK_LIFECYCLE`
-- [ ] `src/agentforge/memory/team_memory.py` — Integram devteam клиент
-- [ ] `src/agentforge/memory/schema.py` — схема таблиц
-- [ ] Заполнить начальные записи из BEEBOT: 5 паттернов, 3 ADR, 2 антипаттерна
-- [ ] `tests/test_team_memory.py` — remember() сохраняет; recall() находит по ключевому слову
+- [x] Создать таблицы: `PATTERNS`(14), `ANTIPATTERNS`(15), `DECISIONS`(16), `LESSONS`(17), `TASK_LIFECYCLE`(18)
+- [x] `src/agentforge/memory/team_memory.py` — Integram devteam клиент
+- [x] `src/agentforge/memory/schema.py` — схема таблиц (typeIds 14–18)
+- [x] Заполнить начальные записи из BEEBOT: 5 паттернов, 3 ADR, 2 антипаттерна
+- [x] Схема обновлена: `TASKS`(127) + `TASK_LIFECYCLE`(133), `PATTERNS.decision_ref`
+- [x] `create_task()` + `log_task_step(parent_id=...)` в team_memory.py
+- [x] `tests/test_team_memory.py` — 28 тестов зелёных (28/28 всего)
+
+**✅ ЗАВЕРШЕНА 07.04.2026 — 28/28 тестов зелёных**
 
 **Выход фазы:** coordinator читает TeamMemory перед запуском ролей, передаёт анамнезис
 

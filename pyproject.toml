@@ -44,3 +44,6 @@ select = ["E", "F", "I", "UP"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+markers = [
+    "integration: тесты с реальной сетью (требуют INTEGRAM_DEVTEAM_EMAIL/PASSWORD)",
+]

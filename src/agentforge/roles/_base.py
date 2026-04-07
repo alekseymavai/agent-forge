@@ -18,7 +18,7 @@ from agentforge.kernel.plugin import RolePlugin
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "claude-sonnet-4-6"
+DEFAULT_MODEL = "anthropic/claude-sonnet-4.6"
 
 
 class LLMRolePlugin(RolePlugin):
@@ -39,10 +39,20 @@ class LLMRolePlugin(RolePlugin):
         client = container.get("llm_client")
         if client is None:
             try:
+                import os
+
                 import anthropic
 
-                client = anthropic.AsyncAnthropic()
-                logger.info("LLMRolePlugin: создан AsyncAnthropic клиент")
+                api_key = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("CLAUDE_API_KEY") or os.environ.get("POLZA_API_KEY")
+                base_url = os.environ.get("ANTHROPIC_BASE_URL") or os.environ.get("CLAUDE_BASE_URL")
+
+                kwargs: dict = {"api_key": api_key}
+                if base_url:
+                    kwargs["base_url"] = base_url
+                    kwargs["default_headers"] = {"Authorization": f"Bearer {api_key}"}
+
+                client = anthropic.AsyncAnthropic(**kwargs)
+                logger.info("LLMRolePlugin: создан AsyncAnthropic клиент (base_url=%s)", base_url or "default")
             except ImportError:
                 raise RuntimeError(
                     "Для работы LLM-ролей нужна зависимость 'anthropic'. "

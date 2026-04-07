@@ -11,6 +11,7 @@ from agentforge.gift import Freedom, Gift
 from agentforge.kernel.app import AgentForgeApp
 from agentforge.kernel.container import Container
 from agentforge.kernel.plugin import RolePlugin
+from agentforge.memory.team_memory import TeamMemory, TeamMemoryError
 from agentforge.project_context import ProjectContext
 
 __all__ = [
@@ -23,4 +24,6 @@ __all__ = [
     "Gift",
     "ProjectContext",
     "RolePlugin",
+    "TeamMemory",
+    "TeamMemoryError",
 ]
