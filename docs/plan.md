@@ -84,11 +84,13 @@ BEEBOT/src/kernel/     ✅  Plugin + Container + BeeBotApp — паттерн д
 
 Цель: первый реальный прогон Scout → Architect → Security.
 
-- [ ] `src/agentforge/roles/scout.py` — договор из `BEEBOT/docs/agents/scout.md`
-- [ ] `src/agentforge/roles/architect.py` — договор из `BEEBOT/docs/agents/architect.md`
-- [ ] `src/agentforge/roles/security.py` — договор из `BEEBOT/docs/agents/security.md`, вес 1.3
-- [ ] `tests/test_roles.py` — Scout.run() → Gift с content; Security DECLINED → pipeline стоп
+- [x] `src/agentforge/roles/scout.py` — договор из `BEEBOT/docs/agents/scout.md`
+- [x] `src/agentforge/roles/architect.py` — договор из `BEEBOT/docs/agents/architect.md`
+- [x] `src/agentforge/roles/security.py` — договор из `BEEBOT/docs/agents/security.md`, вес 1.3
+- [x] `tests/test_roles.py` — Scout.run() → Gift с content; Security DECLINED → pipeline стоп
 - [ ] Первый живой прогон на реальной задаче из AgentForge
+
+**✅ ЗАВЕРШЕНА (кроме живого прогона) 07.04.2026 — 15/15 тестов зелёных**
 
 **Выход фазы:** задача проходит через Scout → Architect → Security → ConsensusReport
 
