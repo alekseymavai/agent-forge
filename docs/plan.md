@@ -120,14 +120,16 @@ BEEBOT/src/kernel/     ✅  Plugin + Container + BeeBotApp — паттерн д
 
 Цель: `agentforge init ProjectX` — и завод готов к работе.
 
-- [ ] `templates/context.yaml` — шаблон с плейсхолдерами (без реальных данных)
-- [ ] `src/agentforge/cli.py` — команды: `init`, `run`, `status`
+- [x] `templates/context.yaml` — шаблон с плейсхолдерами (без реальных данных)
+- [x] `src/agentforge/cli.py` — команды: `init`, `run`, `status`
   - `agentforge init <name>` — создать папку + context.yaml + .gitignore
   - `agentforge run --task "..."` — запустить пайплайн
   - `agentforge status` — текущее состояние задач из TeamMemory
-- [ ] API_KEY только из `os.environ` — не из аргументов CLI (требование Security)
-- [ ] `.agent_bus/` в `.gitignore` шаблона
-- [ ] `tests/test_cli.py` — init создаёт context.yaml; run возвращает ConsensusReport
+- [x] API_KEY только из `os.environ` — не из аргументов CLI (требование Security)
+- [x] `.agent_bus/` в `.gitignore` шаблона
+- [x] `tests/test_cli.py` — init создаёт context.yaml; run возвращает ConsensusReport
+
+**✅ ЗАВЕРШЕНА 08.04.2026 — 34/34 тестов зелёных**
 
 **Выход фазы:** завод запускается одной командой
 
@@ -135,12 +137,14 @@ BEEBOT/src/kernel/     ✅  Plugin + Container + BeeBotApp — паттерн д
 
 ### Фаза 5 — Оставшиеся роли (2 дня)
 
-- [ ] `src/agentforge/roles/product_owner.py`
-- [ ] `src/agentforge/roles/backend_dev.py`
-- [ ] `src/agentforge/roles/frontend_dev.py`
-- [ ] `src/agentforge/roles/qa.py` — вес 1.2
-- [ ] `src/agentforge/roles/devops.py`
-- [ ] `src/agentforge/roles/tech_writer.py`
+- [x] `src/agentforge/roles/product_owner.py`
+- [x] `src/agentforge/roles/backend_dev.py`
+- [x] `src/agentforge/roles/frontend_dev.py`
+- [x] `src/agentforge/roles/qa.py` — вес 1.2
+- [x] `src/agentforge/roles/devops.py`
+- [x] `src/agentforge/roles/tech_writer.py`
+
+**✅ ЗАВЕРШЕНА 08.04.2026 — 44/44 тестов зелёных**
 
 **Выход фазы:** полный пайплайн из 9 ролей
 

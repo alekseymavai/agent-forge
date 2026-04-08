@@ -15,7 +15,7 @@
 
 ---
 
-## Что было сделано в предыдущей сессии (08.04.2026)
+## Что было сделано в предыдущей сессии (08.04.2026, финал)
 
 ### Фазы 1–3 — ЗАВЕРШЕНЫ ✅
 
@@ -49,23 +49,26 @@ pyproject.toml                          ✅  name=agentforge, установле
 - Подтверждён доступ к Integram MCP (devteam воркспейс, 6 таблиц)
 - Установлен пакет в `.venv` (`pip install -e .`)
 - Удалён мёртвый `src/team_infra/`
-- Исправлены импорты в `test_gift.py`, `test_agent_bus.py`
-- 28 тестов зелёных ✅
+- Фаза 4: CLI — `agentforge init / run / status`, 6 тестов ✅
+- Фаза 5: 6 ролей — ProductOwner, BackendDev, FrontendDev, QA, DevOps, TechWriter, 10 тестов ✅
+- Итого: 44 тестов зелёных ✅
 
 ### Что нужно сделать (план в `docs/plan.md`):
 ```
-Фаза 4 (1д): templates/context.yaml + cli.py  ← СЛЕДУЮЩИЙ ШАГ
-Фаза 5 (2д): оставшиеся 6 ролей
-Фаза 6:      первый реальный проект BEECRM
+Фаза 6: первый реальный прогон на BEECRM  ← СЛЕДУЮЩИЙ ШАГ
+  - agentforge init BEECRM
+  - описать телос
+  - полный прогон с реальным LLM
 ```
 
 ---
 
 ## Первые действия в новой сессии
 
-1. Прочитать `docs/plan.md` — найти первую незакрытую задачу Фазы 4
-2. Прочитать `docs/architecture.md`
-3. Реализовать CLI: `agentforge init`, `agentforge run`, `agentforge status`
+1. Прочитать `docs/plan.md` — Фаза 6
+2. `agentforge init BEECRM` — создать проект
+3. Описать телос в `BEECRM/context.yaml`
+4. Запустить полный пайплайн с реальным LLM (нужен `ANTHROPIC_API_KEY`)
 
 ---
 
@@ -138,4 +141,4 @@ assert len(report.gifts) == 3
 ---
 
 *Файл: docs/session_prompt.md*
-*Обновлён: 08.04.2026 — Фазы 1–3 завершены, следующий шаг: Фаза 4 (CLI)*
+*Обновлён: 08.04.2026 — Фазы 1–5 завершены, следующий шаг: Фаза 6 (BEECRM)*
