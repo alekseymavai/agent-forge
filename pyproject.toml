@@ -31,8 +31,14 @@ dev = [
     "mypy>=1.10",
 ]
 
+[project.scripts]
+agentforge = "agentforge.cli:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+agentforge = ["templates/*.yaml"]
 
 [tool.ruff]
 line-length = 100

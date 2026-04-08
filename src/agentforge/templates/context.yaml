@@ -1,0 +1,23 @@
+# AgentForge — контекст проекта
+# Замени значения под свой проект.
+# Секреты — только через ${ENV_VAR}, не хардкодь в файл.
+
+project: "MyProject"
+telos: "Опиши телос проекта — для кого, что, зачем"
+version: "0.1.0"
+lifecycle_stage: "In Design"
+
+stack:
+  language: python
+  framework: ""
+  database: ""
+
+fragile_zones: []
+
+current_state:
+  status: started
+
+decisions: []
+
+team_memory_workspace: devteam
+agent_bus_dir: .agent_bus

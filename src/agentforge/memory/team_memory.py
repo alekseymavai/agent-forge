@@ -358,6 +358,11 @@ class TeamMemory:
         data = await self._call("list_objects", {"typeId": TABLE_DECISIONS, "limit": limit})
         return self._extract_rows(data)
 
+    async def list_tasks(self, limit: int = 50) -> list[dict]:
+        """Список задач из TASKS (для agentforge status)."""
+        data = await self._call("list_objects", {"typeId": TABLE_TASKS, "limit": limit})
+        return self._extract_rows(data)
+
     @staticmethod
     def _extract_rows(data: Any) -> list[dict]:
         """Извлечь список записей из ответа Integram (rows или objects)."""
