@@ -68,7 +68,7 @@ class ScoutPlugin(LLMRolePlugin):
 Составь карту задачи для Архитектора."""
 
         try:
-            raw = await self._call_llm(SYSTEM_PROMPT, user_msg, max_tokens=1500)
+            raw = await self._call_llm(SYSTEM_PROMPT, user_msg, max_tokens=3000)
             content = _parse_json(raw)
         except Exception as e:
             logger.error("Scout: ошибка LLM вызова: %s", e)

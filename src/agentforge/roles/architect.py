@@ -88,7 +88,7 @@ class ArchitectPlugin(LLMRolePlugin):
 Предложи два варианта решения."""
 
         try:
-            raw = await self._call_llm(SYSTEM_PROMPT, user_msg, max_tokens=2000)
+            raw = await self._call_llm(SYSTEM_PROMPT, user_msg, max_tokens=8000)
             content = _parse_json(raw)
         except Exception as e:
             logger.error("Architect: ошибка LLM вызова: %s", e)

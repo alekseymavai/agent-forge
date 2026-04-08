@@ -1,144 +1,97 @@
 # AgentForge — Промт для новой сессии
 
-> Скопируй этот промт целиком в начало новой сессии Claude Code в папке `/home/hive/AgentForge/`
+> Скопируй этот промт целиком в начало новой сессии Claude Code
 
 ---
 
-## Контекст проекта
+## Контекст
 
-Мы разрабатываем **AgentForge** — переиспользуемую инфраструктуру команды AI-агентов-разработчиков на онтологии дара (PLM-GIFT).
+Разрабатываем **BEECRM** — CRM-систему для пчеловода Александра Дмитрова («Усадьба Дмитровых»).
+Проект создан командой AgentForge (Scout → Architect → Security, 08.04.2026).
 
-**Телос:**
-> «Когда Алексей говорит "создаём новый проект" — команда с памятью уже работает.»
-
-**Продукт завода:** программный проект (код + архитектура + тесты), созданный командой ролей по Gift Protocol. Финальное решение — всегда за Алексеем (`human_decision_required: True`).
-
----
-
-## Что было сделано в предыдущей сессии (08.04.2026, финал)
-
-### Фазы 1–3 — ЗАВЕРШЕНЫ ✅
-
-**ADR-001:** Role = RolePlugin (микроядро), не AgentBase напрямую.
-**ADR-002:** Переименовано `team_infra` → `agentforge`.
-
-### Что реализовано:
-```
-src/agentforge/__init__.py              ✅  публичный API
-src/agentforge/gift.py                  ✅  Gift dataclass, Freedom enum
-src/agentforge/agent_bus.py             ✅  файловая шина inbox/outbox/log
-src/agentforge/agent_core.py            ✅  AgentBase ABC, ROLE_WEIGHTS
-src/agentforge/project_context.py       ✅  ProjectContext.load() из context.yaml
-src/agentforge/kernel/plugin.py         ✅  abstract RolePlugin
-src/agentforge/kernel/container.py      ✅  DI-контейнер
-src/agentforge/kernel/app.py            ✅  AgentForgeApp: register + toposort + setup/teardown
-src/agentforge/coordinator.py           ✅  Coordinator → ConsensusReport
-src/agentforge/roles/scout.py           ✅  ScoutPlugin
-src/agentforge/roles/architect.py       ✅  ArchitectPlugin
-src/agentforge/roles/security.py        ✅  SecurityPlugin (вес 1.3)
-src/agentforge/roles/_base.py           ✅  базовый LLM-плагин
-src/agentforge/memory/team_memory.py    ✅  Integram devteam клиент
-src/agentforge/memory/schema.py         ✅  typeIds: PATTERNS(14), ANTIPATTERNS(15),
-                                             DECISIONS(16), LESSONS(17),
-                                             TASKS(127), TASK_LIFECYCLE(133)
-tests/ (28 тестов, 1 skipped)           ✅  все зелёные
-pyproject.toml                          ✅  name=agentforge, установлен в .venv
-```
-
-### Сессия 08.04.2026:
-- Подтверждён доступ к Integram MCP (devteam воркспейс, 6 таблиц)
-- Установлен пакет в `.venv` (`pip install -e .`)
-- Удалён мёртвый `src/team_infra/`
-- Фаза 4: CLI — `agentforge init / run / status`, 6 тестов ✅
-- Фаза 5: 6 ролей — ProductOwner, BackendDev, FrontendDev, QA, DevOps, TechWriter, 10 тестов ✅
-- Итого: 44 тестов зелёных ✅
-
-### Что нужно сделать (план в `docs/plan.md`):
-```
-Фаза 6: первый реальный прогон на BEECRM  ← СЛЕДУЮЩИЙ ШАГ
-  - agentforge init BEECRM
-  - описать телос
-  - полный прогон с реальным LLM
-```
+**Репозиторий:** `alekseymavai/beecrm` (приватный)
+**Локально:** `/home/hive/BEECRM/`
+**Сервер:** `ssh ai-agent@178.253.39.215`
 
 ---
 
-## Первые действия в новой сессии
+## Что прочитать перед началом
 
-1. Прочитать `docs/plan.md` — Фаза 6
-2. `agentforge init BEECRM` — создать проект
-3. Описать телос в `BEECRM/context.yaml`
-4. Запустить полный пайплайн с реальным LLM (нужен `ANTHROPIC_API_KEY`)
+1. `/home/hive/BEECRM/docs/architecture.md` — полная согласованная архитектура
+2. `/home/hive/BEECRM/context.yaml` — телос проекта
 
 ---
 
-## Анамнезис — откуда берём паттерны
+## Что уже сделано (08.04.2026)
 
-**Микроядро (Plugin + Container + App):**
-```
-src/agentforge/kernel/plugin.py     ← уже адаптировано
-src/agentforge/kernel/container.py  ← уже адаптировано
-src/agentforge/kernel/app.py        ← уже адаптировано
-```
+### AgentForge (фреймворк)
+- Фазы 1–5 завершены, 44 теста зелёных
+- Пакет `agentforge` установлен в `.venv`
+- CLI: `agentforge init / run / status`
+- 9 ролей: Scout, Architect, Security, ProductOwner, BackendDev, FrontendDev, QA, DevOps, TechWriter
 
-**Договоры ролей (9 файлов):**
+### BEECRM (продукт)
+- Первый живой прогон AgentForge: Scout → Architect → Security ✅
+- Security YELLOW ACCEPTED (второй прогон)
+- ADR-001 принят: FastAPI + SQLAlchemy 2.x + PostgreSQL + Alembic
+- Архитектура сохранена в `docs/architecture.md`
+- Репозиторий создан: `alekseymavai/beecrm`
+
+### Сервер 178.253.39.215 (vm4115781.firstbyte.club)
+- Ubuntu 22.04, 77GB диск
+- Уже работает: nginx, MariaDB, Neo4j, Redis, Integram → `https://ai2o.online`
+- Пользователь `ai-agent` создан, SSH по ключу работает
+- Папки: `/home/ai-agent/BEECRM/`, `/home/ai-agent/logs/`
+- sudoers: `systemctl beecrm` + docker мониторинг
+
+### TeamMemory (devteam, https://ai2o.online)
+- ADR-001 id=147: стек и Security Baseline
+- LESSON id=155: настройка ai-agent на firstbyte.club
+- TASK id=169: реализация ядра (Scout/Architect/Security ACCEPTED)
+
+---
+
+## Первый шаг в новой сессии
+
+Реализовать базовый скелет BEECRM:
+
 ```
-/home/hive/BEEBOT/docs/agents/scout.md
-/home/hive/BEEBOT/docs/agents/architect.md
-/home/hive/BEEBOT/docs/agents/security.md
-/home/hive/BEEBOT/docs/agents/qa.md
-/home/hive/BEEBOT/docs/agents/backend_dev.md
-/home/hive/BEEBOT/docs/agents/frontend_dev.md
-/home/hive/BEEBOT/docs/agents/devops.md
-/home/hive/BEEBOT/docs/agents/tech_writer.md
-/home/hive/BEEBOT/docs/agents/product_owner.md
+settings.py           ← os.environ[KEY], startup_check(), MAX_PAYLOAD_BYTES=65536
+db.py                 ← SQLAlchemy engine + SessionLocal
+models/client.py      ← Client: id, phone, email, name; UNIQUE(phone, email)
+models/order.py       ← Order: id, client_id, source, status, payload JSONB
+models/order_event.py ← OrderEvent append-only
+migrations/0001_initial.py ← таблицы + CHECK octet_length(payload::text) <= 65536
 ```
 
 ---
 
-## Требования Security (учесть при реализации)
+## Ключевые решения (ADR-001)
 
-- `INTEGRAM_DEVTEAM_TOKEN` — отдельная env переменная (не токен bibot)
-- `.agent_bus/` — в `.gitignore` ✅
-- `context.yaml` — только `${ENV_VAR}`, никаких секретов в файле
-- CLI: API_KEY только из `os.environ`, не из аргументов командной строки
-
----
-
-## Как работает команда в этом проекте
-
-Перед каждой нетривиальной задачей — прогон по ролям (имитация или реальные субагенты):
-
-```
-Product Owner → Scout → Architect → Security → ConsensusReport → Алексей решает
-```
-
-После реализации:
-```
-QA → Security → DevOps → TechWriter
-```
-
-Каждая роль имеет договор в `/home/hive/BEEBOT/docs/agents/<role>.md`.
+1. Секреты — только `os.environ[KEY]`, никаких `.get(KEY, default)`
+2. `startup_check()` вызывается в `lifespan` hook `main.py`
+3. `MAX_PAYLOAD_BYTES = 65536` — единственный источник, импортируется в Pydantic и миграцию
+4. `OrderEvent` — append-only на уровне сервиса
+5. `BaseAdapter.normalize()` — template method, валидация физически встроена
 
 ---
 
-## Критерий готовности Фазы 2
+## Открытые MEDIUM от Security (учесть при реализации)
 
-```python
-# Первый живой прогон Scout → Architect → Security
-app = AgentForgeApp()
-app.register(ScoutPlugin())     # читает код, возвращает карту
-app.register(ArchitectPlugin()) # предлагает 2 варианта
-app.register(SecurityPlugin())  # атакует варианты
+1. Интеграционный тест CHECK constraint — на реальном PostgreSQL (testcontainers)
+2. `json.dumps(payload, separators=(',',':'), ensure_ascii=False)` — зафиксировать явно
+3. `openpyxl` открывать с `read_only=True, data_only=True`
+4. `detect-secrets` pre-commit hook добавить в setup
 
-coordinator = Coordinator(app, telos="...")
-report = await coordinator.run("Спроектируй модуль X")
+---
 
-assert report.security_status in ("GREEN", "YELLOW", "RED")
-assert len(report.gifts) == 3
+## Польза.AI (LLM для ролей AgentForge)
+
+```bash
+export ANTHROPIC_API_KEY=pza_vcFPrgkRJRN88ztNWzsUH2bZOszEQQR_
+export ANTHROPIC_BASE_URL=https://api.polza.ai
 ```
 
 ---
 
-*Файл: docs/session_prompt.md*
-*Обновлён: 08.04.2026 — Фазы 1–5 завершены, следующий шаг: Фаза 6 (BEECRM)*
+*Обновлён: 08.04.2026 — BEECRM инициализирован, сервер настроен, TeamMemory заполнена*

@@ -85,7 +85,7 @@ class SecurityPlugin(LLMRolePlugin):
 Проведи аудит безопасности."""
 
         try:
-            raw = await self._call_llm(SYSTEM_PROMPT, user_msg, max_tokens=1500)
+            raw = await self._call_llm(SYSTEM_PROMPT, user_msg, max_tokens=4000)
             content = _parse_json(raw)
         except Exception as e:
             logger.error("Security: ошибка LLM вызова: %s", e)
