@@ -1,7 +1,7 @@
 """Тесты Gift Protocol."""
 
 import pytest
-from src.team_infra.gift import Gift, Freedom
+from agentforge.gift import Gift, Freedom
 
 
 def test_gift_created():

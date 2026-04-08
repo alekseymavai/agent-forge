@@ -5,8 +5,8 @@ import tempfile
 from pathlib import Path
 
 import pytest
-from src.team_infra.agent_bus import AgentBus
-from src.team_infra.gift import Gift
+from agentforge.agent_bus import AgentBus
+from agentforge.gift import Gift
 
 
 def test_send_and_receive():

@@ -15,37 +15,46 @@
 
 ---
 
-## Что было сделано в предыдущей сессии (07.04.2026)
+## Что было сделано в предыдущей сессии (08.04.2026)
 
-### Фаза 1 — ЗАВЕРШЕНА ✅
+### Фазы 1–3 — ЗАВЕРШЕНЫ ✅
 
 **ADR-001:** Role = RolePlugin (микроядро), не AgentBase напрямую.
 **ADR-002:** Переименовано `team_infra` → `agentforge`.
 
 ### Что реализовано:
 ```
-src/agentforge/__init__.py          ✅  публичный API
-src/agentforge/gift.py              ✅  Gift dataclass, Freedom enum
-src/agentforge/agent_bus.py         ✅  файловая шина inbox/outbox/log
-src/agentforge/agent_core.py        ✅  AgentBase ABC, ROLE_WEIGHTS
-src/agentforge/project_context.py   ✅  ProjectContext.load() из context.yaml
-src/agentforge/kernel/plugin.py     ✅  abstract RolePlugin
-src/agentforge/kernel/container.py  ✅  DI-контейнер
-src/agentforge/kernel/app.py        ✅  AgentForgeApp: register + тoposort + setup/teardown
-src/agentforge/coordinator.py       ✅  Coordinator → ConsensusReport
-tests/test_coordinator.py           ✅  4 теста (9 всего)
-pyproject.toml                      ✅  name=agentforge, build_meta backend
+src/agentforge/__init__.py              ✅  публичный API
+src/agentforge/gift.py                  ✅  Gift dataclass, Freedom enum
+src/agentforge/agent_bus.py             ✅  файловая шина inbox/outbox/log
+src/agentforge/agent_core.py            ✅  AgentBase ABC, ROLE_WEIGHTS
+src/agentforge/project_context.py       ✅  ProjectContext.load() из context.yaml
+src/agentforge/kernel/plugin.py         ✅  abstract RolePlugin
+src/agentforge/kernel/container.py      ✅  DI-контейнер
+src/agentforge/kernel/app.py            ✅  AgentForgeApp: register + toposort + setup/teardown
+src/agentforge/coordinator.py           ✅  Coordinator → ConsensusReport
+src/agentforge/roles/scout.py           ✅  ScoutPlugin
+src/agentforge/roles/architect.py       ✅  ArchitectPlugin
+src/agentforge/roles/security.py        ✅  SecurityPlugin (вес 1.3)
+src/agentforge/roles/_base.py           ✅  базовый LLM-плагин
+src/agentforge/memory/team_memory.py    ✅  Integram devteam клиент
+src/agentforge/memory/schema.py         ✅  typeIds: PATTERNS(14), ANTIPATTERNS(15),
+                                             DECISIONS(16), LESSONS(17),
+                                             TASKS(127), TASK_LIFECYCLE(133)
+tests/ (28 тестов, 1 skipped)           ✅  все зелёные
+pyproject.toml                          ✅  name=agentforge, установлен в .venv
 ```
 
-Критерий Фазы 1 выполнен:
-- `AgentForge.run(task)` → ConsensusReport, `human_decision_required=True`
-- Security DECLINED → `blocked=True`, `security_status=RED`
+### Сессия 08.04.2026:
+- Подтверждён доступ к Integram MCP (devteam воркспейс, 6 таблиц)
+- Установлен пакет в `.venv` (`pip install -e .`)
+- Удалён мёртвый `src/team_infra/`
+- Исправлены импорты в `test_gift.py`, `test_agent_bus.py`
+- 28 тестов зелёных ✅
 
 ### Что нужно сделать (план в `docs/plan.md`):
 ```
-Фаза 2 (3д): roles/ — Scout, Architect, Security  ← СЛЕДУЮЩИЙ ШАГ
-Фаза 3 (2д): memory/team_memory.py — Integram devteam
-Фаза 4 (1д): templates/context.yaml + cli.py
+Фаза 4 (1д): templates/context.yaml + cli.py  ← СЛЕДУЮЩИЙ ШАГ
 Фаза 5 (2д): оставшиеся 6 ролей
 Фаза 6:      первый реальный проект BEECRM
 ```
@@ -54,10 +63,9 @@ pyproject.toml                      ✅  name=agentforge, build_meta backend
 
 ## Первые действия в новой сессии
 
-1. Прочитать `docs/plan.md` — найти первую незакрытую задачу Фазы 2
-2. Прочитать `docs/architecture.md` — структура roles/ и пайплайн
-3. Прочитать договоры ролей в `BEEBOT/docs/agents/scout.md`, `architect.md`, `security.md`
-4. Реализовать роли по ADR-001 (RolePlugin, не AgentBase)
+1. Прочитать `docs/plan.md` — найти первую незакрытую задачу Фазы 4
+2. Прочитать `docs/architecture.md`
+3. Реализовать CLI: `agentforge init`, `agentforge run`, `agentforge status`
 
 ---
 
@@ -130,4 +138,4 @@ assert len(report.gifts) == 3
 ---
 
 *Файл: docs/session_prompt.md*
-*Обновлён: 07.04.2026 — Фаза 1 завершена*
+*Обновлён: 08.04.2026 — Фазы 1–3 завершены, следующий шаг: Фаза 4 (CLI)*
