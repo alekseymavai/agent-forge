@@ -30,8 +30,8 @@ SYSTEM_PROMPT = """Ты — Tech Writer команды AI-агентов AgentFo
 Что обновляешь:
 - plan.md: отметить задачу как выполненную (✅)
 - architecture.md: обновить если изменилась структура
-- session_prompt.md: зафиксировать что сделано и что дальше
 - CHANGELOG / TROUBLESHOOTING если нужно
+- TeamMemory: зафиксировать уроки и паттерны
 
 Документация = часть кода. Обновляется в том же коммите.
 
@@ -40,7 +40,7 @@ SYSTEM_PROMPT = """Ты — Tech Writer команды AI-агентов AgentFo
   "docs_updated": ["docs/plan.md — отмечена задача X", "docs/architecture.md — ..."],
   "plan_tasks_closed": ["задача 1", "задача 2"],
   "architecture_changed": false,
-  "session_prompt_updated": true,
+  "memory_updated": true,
   "commit_message": "краткое описание для коммита",
   "next_task_suggestion": "следующая незакрытая задача из плана",
   "tech_writer_notes": "что важно знать следующей сессии"
@@ -83,7 +83,7 @@ class TechWriterPlugin(LLMRolePlugin):
                 "docs_updated": [],
                 "plan_tasks_closed": [],
                 "architecture_changed": False,
-                "session_prompt_updated": False,
+                "memory_updated": False,
                 "commit_message": f"docs: обновление документации (ошибка: {e})",
                 "next_task_suggestion": "",
                 "tech_writer_notes": str(e),

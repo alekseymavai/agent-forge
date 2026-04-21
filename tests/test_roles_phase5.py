@@ -127,11 +127,11 @@ DEVOPS_RESPONSE = json.dumps({
 TECHWRITER_RESPONSE = json.dumps({
     "docs_updated": [
         "docs/plan.md — Фаза 4 отмечена ✅",
-        "docs/session_prompt.md — обновлён контекст",
+        "docs/architecture.md — обновлена структура CLI",
     ],
     "plan_tasks_closed": ["Фаза 4 CLI"],
     "architecture_changed": False,
-    "session_prompt_updated": True,
+    "memory_updated": True,
     "commit_message": "docs: Фаза 4 завершена — CLI готов",
     "next_task_suggestion": "Фаза 5 — оставшиеся 6 ролей",
     "tech_writer_notes": "CLI работает, следующий шаг — ProductOwner и другие роли",
