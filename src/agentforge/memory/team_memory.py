@@ -1,6 +1,6 @@
 """team_memory.py — клиент Team Memory для AgentForge.
 
-Хранит и извлекает командный опыт из воркспейса devteam (Integram).
+Хранит и извлекает командный опыт из воркспейса agentforgememory (Integram).
 
 Конфигурация (из env):
   INTEGRAM_URL              — базовый URL (по умолчанию https://ai2o.online)
@@ -23,17 +23,19 @@ from typing import Any
 import httpx
 
 from agentforge.memory.schema import (
+    TABLE_AGENTS,
     TABLE_ANTIPATTERNS,
     TABLE_DECISIONS,
     TABLE_LESSONS,
     TABLE_PATTERNS,
     TABLE_TASK_LIFECYCLE,
     TABLE_TASKS,
+    WORKSPACE_SLUG,
 )
 
 logger = logging.getLogger(__name__)
 
-WORKSPACE = "devteam"
+WORKSPACE = WORKSPACE_SLUG  # "agentforgememory"
 DEFAULT_URL = "https://ai2o.online"
 
 
@@ -143,7 +145,6 @@ class TeamMemory:
         description: str,
         context: str = "",
         example: str = "",
-        project: str = "",
         tags: str = "",
     ) -> int:
         """Сохранить паттерн. Возвращает ID записи."""
@@ -154,9 +155,7 @@ class TeamMemory:
                 "description": description,
                 "context": context,
                 "example": example,
-                "project": project,
                 "tags": tags,
-                "created_at": self._now(),
             },
         })
         obj_id = result.get("id") if isinstance(result, dict) else None
@@ -181,7 +180,6 @@ class TeamMemory:
                 "remedy": remedy,
                 "project": project,
                 "tags": tags,
-                "created_at": self._now(),
             },
         })
         obj_id = result.get("id") if isinstance(result, dict) else None
@@ -195,18 +193,16 @@ class TeamMemory:
         context: str,
         decision: str,
         consequences: str = "",
-        project: str = "",
         status: str = "accepted",
     ) -> int:
         result = await self._call("create_object", {
             "typeId": TABLE_DECISIONS,
             "fields": {
                 "adr_id": adr_id,
-                "title": title,
+                "Название": title,
                 "context": context,
                 "decision": decision,
                 "consequences": consequences,
-                "project": project,
                 "status": status,
             },
         })
@@ -220,19 +216,16 @@ class TeamMemory:
         what_happened: str,
         what_learned: str,
         how_to_apply: str = "",
-        project: str = "",
         severity: str = "medium",
     ) -> int:
         result = await self._call("create_object", {
             "typeId": TABLE_LESSONS,
             "fields": {
-                "title": title,
+                "name": title,
                 "what_happened": what_happened,
                 "what_learned": what_learned,
                 "how_to_apply": how_to_apply,
-                "project": project,
                 "severity": severity,
-                "created_at": self._now(),
             },
         })
         obj_id = result.get("id") if isinstance(result, dict) else None
@@ -250,11 +243,8 @@ class TeamMemory:
         result = await self._call("create_object", {
             "typeId": TABLE_TASKS,
             "fields": {
-                "task_id": task_id,
-                "title": title,
-                "project": project,
-                "status": status,
-                "created_at": self._now(),
+                "Название": f"[{task_id}] {title}",
+                "Описание": f"project={project}, status={status}",
             },
         })
         obj_id = result.get("id") if isinstance(result, dict) else None
@@ -268,15 +258,15 @@ class TeamMemory:
         gift_content: str,
         parent_id: int,  # ID записи в TASKS (обязателен — child требует parentId)
     ) -> int:
-        """Сохранить шаг задачи как child-запись TASKS."""
+        """Сохранить шаг задачи как child-запись TASK_LIFECYCLE."""
         result = await self._call("create_object", {
             "typeId": TABLE_TASK_LIFECYCLE,
             "parentId": parent_id,
             "fields": {
+                "name": f"{role} — {freedom}",
                 "role": role,
                 "freedom": freedom,
                 "gift_content": gift_content[:2000],
-                "timestamp": self._now(),
             },
         })
         obj_id = result.get("id") if isinstance(result, dict) else None

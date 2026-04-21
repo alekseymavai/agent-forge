@@ -31,8 +31,8 @@
 | Подсистема | Суть |
 |-----------|------|
 | **GiftBus** | Протокол передачи даров между ролями (telos / anamnesis / freedom) |
-| **Team Memory** | Integram `devteam` — Code Memory Graph (паттерны, ADR, уроки) |
-| **Role Registry** | Лица с призванием: Scout, Architect, Dev, QA, Security, DevOps, TechWriter |
+| **Team Memory** | Integram `agentforgememory` — Code Memory Graph (паттерны, ADR, уроки) |
+| **Role Registry** | 10 лиц с призванием (см. Команда ниже) |
 
 ## Быстрый старт
 
@@ -45,20 +45,47 @@ cp agent-forge/templates/context.yaml docs/memory/context.yaml
 # Отредактировать: telos, stack, fragile_zones
 ```
 
+## Команда (10 ролей)
+
+| # | Имя | English | Вес | Блокирует |
+|---|-----|---------|-----|-----------|
+| 0 | Хозяин | ProductOwner | 1.0 | может DEFER |
+| 1 | Ведатель | Scout | 0.9 | нет |
+| 2 | Зодчий | Architect | 1.0 | нет |
+| 3 | Блюститель | SecurityReviewer | 1.3 | **да** |
+| 4 | Делатель-тыл | BackendDev | 1.0 | нет |
+| 5 | Делатель-лик | FrontendDev | 1.0 | нет |
+| 6 | Испытат��ль | QA | 1.2 | может DEFER |
+| 7 | Устроитель | DevOps | 1.0 | нет (гибрид) |
+| 8 | Летописец | TechWriter | 1.0 | нет |
+| 9 | Наставник | TeamLead | 1.5 | **да** |
+
+Пайплайн: Наставник → Хозяин → Ведатель → Зодчий → Блюститель → Делатель-тыл / Делатель-лик (параллельно) → Испытатель → Устроитель → Летописец → Хозяин → Наставник
+
+Подробные контракты: [`docs/agents/`](docs/agents/) | Протокол: [`docs/team-protocol.md`](docs/team-protocol.md)
+
 ## Структура
 
 ```
 AgentForge/
-├── src/team_infra/
-│   ├── gift.py          # Gift dataclass + GiftBus
-│   ├── team_memory.py   # Integram devteam клиент
-│   ├── agent_bus.py     # файловая шина + лог
-│   ├── agent_core.py    # базовый класс агента-лица
-│   └── roles/           # Scout, Architect, Dev, QA, Security, DevOps, TechWriter
+├── src/agentforge/
+│   ├── gift.py              # Gift dataclass + Freedom
+│   ├── agent_bus.py         # файловая шина + лог
+│   ├── agent_core.py        # базовый класс агента-лица
+│   ├── coordinator.py       # оркестрация пайплайна
+│   ├── project_context.py   # контекст проекта
+│   ├── cli.py               # agentforge init / run / status
+│   ├── kernel/              # Plugin + Container + App (микроядро из BEEBOT)
+│   ├── memory/
+│   │   ├── schema.py        # ID таблиц agentforgememory
+│   │   └── team_memory.py   # Integram клиент
+│   ├── roles/               # 10 ролей (LLMRolePlugin)
+│   └── templates/           # шаблоны проекта
 ├── docs/
-│   ├── plan.md          # план реализации
-│   ├── concept.md       # полная философия
-│   └── agents/          # договор каждой роли
+│   ├── plan.md              # план реализации
+│   ├── architecture.md      # архитектура
+│   ├── team-protocol.md     # протокол команды
+│   └── agents/              # контракт ка��дой роли (10 файлов)
 └── tests/
 ```
 
@@ -72,11 +99,25 @@ AgentForge/
         > скорость реализации
 ```
 
+## Память команды
+
+Workspace: **agentforgememory** (ai2o.online)
+
+| Таблица | ID | Содержимое |
+|---------|----|------------|
+| PATTERNS | 240 | Архитектурные паттерны (5 записей) |
+| ANTIPATTERNS | 414 | Антипаттерны (пустая, на будущее) |
+| Архитектура_решений | 132 | ADR (3 записи) |
+| LESSONS | 241 | Уроки (1 запись) |
+| Агенты | 128 | 10 ролей с параметрами |
+| Задачи | 125 | Трекинг задач |
+| TASK_LIFECYCLE | 420 | Шаги выполнения (child → Задачи) |
+
 ## Проекты на AgentForge
 
 | Проект | Статус |
 |--------|--------|
-| BEEBOT (Telegram-бот пчеловода) | подключается в Фазе 5 |
+| BEEBOT (Telegram-бот пчеловода) | подключён |
 
 ## Авторы
 
