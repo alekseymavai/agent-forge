@@ -28,14 +28,12 @@
 2. `docs/architecture.md` — структура пакета и пайплайн
 3. `docs/session_prompt.md` — контекст предыдущей сессии
 
-### Текущий статус (07.04.2026):
-- Фаза 1 — Ядро: **в работе** (следующий шаг)
-- Фундамент: gift.py, agent_bus.py, agent_core.py, project_context.py ✅
-- Пакет называется `team_infra` — нужно переименовать в `agentforge` (ADR-002)
-
-### Анамнезис (откуда берём паттерны):
-- `BEEBOT/src/kernel/` — микроядро (Plugin + Container + BeeBotApp)
-- `BEEBOT/docs/agents/` — договоры 9 ролей
+### Текущий статус (21.04.2026):
+- Фазы 1–6 завершены, 45 тестов зелёных
+- Пакет: `agentforge` (pip install, from agentforge import ...)
+- 10 ролей (LLMRolePlugin), CLI, Team Memory (agentforgememory)
+- Два режима LLM: prompt (по умолчанию, через Claude Code) и api (--api, внешний LLM)
+- Следующая: Фаза 7 — первый реальный проект
 
 ---
 
@@ -61,5 +59,5 @@
 - Push только через `alekseymavai`
 - Каждое открытие сохранять в память СРАЗУ
 - Финальное решение — всегда за Алексеем (`human_decision_required: True`)
-- Команда работает по ролям: Product Owner → Scout → Architect → Security → ConsensusReport
+- Пайплайн 10 ролей: Наставник → Хозяин → Ведатель → Зодчий → Блюститель → Делатели → Испытатель → Устроитель → Летописец → ConsensusReport
 - Обновлять `docs/session_prompt.md` в конце каждой значимой сессии
