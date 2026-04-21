@@ -6,92 +6,71 @@
 
 ## Контекст
 
-Разрабатываем **BEECRM** — CRM-систему для пчеловода Александра Дмитрова («Усадьба Дмитровых»).
-Проект создан командой AgentForge (Scout → Architect → Security, 08.04.2026).
+Разрабатываем **AgentForge** — переиспользуемую инфраструктуру команды AI-агентов-разработчиков.
 
-**Репозиторий:** `alekseymavai/beecrm` (приватный)
-**Локально:** `/home/hive/BEECRM/`
-**Сервер:** `ssh ai-agent@178.253.39.215`
+**Репозиторий:** `alekseymavai/agent-forge`
+**Локально:** `/home/hive/AgentForge/`
+**GitHub:** https://github.com/alekseymavai/agent-forge
 
 ---
 
 ## Что прочитать перед началом
 
-1. `/home/hive/BEECRM/docs/architecture.md` — полная согласованная архитектура
-2. `/home/hive/BEECRM/context.yaml` — телос проекта
+1. `docs/plan.md` — план по фазам, найти первую незакрытую задачу
+2. `docs/architecture.md` — структура пакета и пайплайн (v2.0)
+3. `docs/team-protocol.md` — протокол команды (10 ролей, консенсус, онтология дара)
 
 ---
 
-## Что уже сделано (08.04.2026)
+## Что уже сделано (21.04.2026)
 
-### AgentForge (фреймворк)
-- Фазы 1–5 завершены, 44 теста зелёных
-- Пакет `agentforge` установлен в `.venv`
-- CLI: `agentforge init / run / status`
-- 9 ролей: Scout, Architect, Security, ProductOwner, BackendDev, FrontendDev, QA, DevOps, TechWriter
+### Фазы 1–6 завершены (44 теста зелёных)
 
-### BEECRM (продукт)
-- Первый живой прогон AgentForge: Scout → Architect → Security ✅
-- Security YELLOW ACCEPTED (второй прогон)
-- ADR-001 принят: FastAPI + SQLAlchemy 2.x + PostgreSQL + Alembic
-- Архитектура сохранена в `docs/architecture.md`
-- Репозиторий создан: `alekseymavai/beecrm`
+- **Ядро:** kernel/ (Plugin + Container + App), coordinator.py → ConsensusReport
+- **Протоколы:** gift.py (Gift + Freedom), agent_bus.py, project_context.py
+- **10 ролей** (LLMRolePlugin): Хозяин(PO), Ведатель(Scout), Зодчий(Architect), Блюститель(Security,1.3), Делатель-тыл(Backend), Делатель-лик(Frontend), Испытатель(QA,1.2), Устроитель(DevOps), Летописец(TechWriter), Наставник(TeamLead,1.5)
+- **CLI:** `agentforge init / run / status`
+- **Team Memory:** workspace agentforgememory (ai2o.online)
+- **Документация:** 10 контрактов ролей, team-protocol.md, architecture.md v2.0
 
-### Сервер 178.253.39.215 (vm4115781.firstbyte.club)
-- Ubuntu 22.04, 77GB диск
-- Уже работает: nginx, MariaDB, Neo4j, Redis, Integram → `https://ai2o.online`
-- Пользователь `ai-agent` создан, SSH по ключу работает
-- Папки: `/home/ai-agent/BEECRM/`, `/home/ai-agent/logs/`
-- sudoers: `systemctl beecrm` + docker мониторинг
-
-### TeamMemory (devteam, https://ai2o.online)
-- ADR-001 id=147: стек и Security Baseline
-- LESSON id=155: настройка ai-agent на firstbyte.club
-- TASK id=169: реализация ядра (Scout/Architect/Security ACCEPTED)
-
----
-
-## Первый шаг в новой сессии
-
-Реализовать базовый скелет BEECRM:
+### Пайплайн
 
 ```
-settings.py           ← os.environ[KEY], startup_check(), MAX_PAYLOAD_BYTES=65536
-db.py                 ← SQLAlchemy engine + SessionLocal
-models/client.py      ← Client: id, phone, email, name; UNIQUE(phone, email)
-models/order.py       ← Order: id, client_id, source, status, payload JSONB
-models/order_event.py ← OrderEvent append-only
-migrations/0001_initial.py ← таблицы + CHECK octet_length(payload::text) <= 65536
+Наставник → Хозяин → Ведатель → Зодчий → Блюститель
+  → Делатель-тыл / Делатель-лик (параллельно)
+  → Испытатель → Устроитель → Летописец
+  → Хозяин → Наставник → ConsensusReport
 ```
 
----
+### Team Memory (agentforgememory, ai2o.online)
 
-## Ключевые решения (ADR-001)
-
-1. Секреты — только `os.environ[KEY]`, никаких `.get(KEY, default)`
-2. `startup_check()` вызывается в `lifespan` hook `main.py`
-3. `MAX_PAYLOAD_BYTES = 65536` — единственный источник, импортируется в Pydantic и миграцию
-4. `OrderEvent` — append-only на уровне сервиса
-5. `BaseAdapter.normalize()` — template method, валидация физически встроена
-
----
-
-## Открытые MEDIUM от Security (учесть при реализации)
-
-1. Интеграционный тест CHECK constraint — на реальном PostgreSQL (testcontainers)
-2. `json.dumps(payload, separators=(',',':'), ensure_ascii=False)` — зафиксировать явно
-3. `openpyxl` открывать с `read_only=True, data_only=True`
-4. `detect-secrets` pre-commit hook добавить в setup
+| Таблица | ID |
+|---------|----|
+| PATTERNS | 240 |
+| ANTIPATTERNS | 414 |
+| Архитектура_решений | 132 |
+| LESSONS | 241 |
+| Агенты | 128 |
+| Задачи | 125 |
+| TASK_LIFECYCLE | 420 |
 
 ---
 
-## Польза.AI (LLM для ролей AgentForge)
+## Следующий шаг
+
+**Фаза 7 — первый реальный проект:**
+- `agentforge init <ProjectName>` + описание телоса
+- Полный прогон пайплайна → ConsensusReport → решение Алексея
+
+---
+
+## LLM для ролей AgentForge
 
 ```bash
-export ANTHROPIC_API_KEY=pza_vcFPrgkRJRN88ztNWzsUH2bZOszEQQR_
+export ANTHROPIC_API_KEY=<ключ из менеджера секретов>
 export ANTHROPIC_BASE_URL=https://api.polza.ai
 ```
 
 ---
 
-*Обновлён: 08.04.2026 — BEECRM инициализирован, сервер настроен, TeamMemory заполнена*
+*Обновлён: 21.04.2026 — Фазы 1–6 завершены, команда 10 ролей зафиксирована*
