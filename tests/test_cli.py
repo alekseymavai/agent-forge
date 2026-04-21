@@ -48,16 +48,43 @@ def test_init_fails_if_dir_exists(tmp_path, monkeypatch):
 # ── run ───────────────────────────────────────────────────────────────────────
 
 
-def test_run_exits_without_api_key(tmp_path, monkeypatch):
+def test_run_api_mode_exits_without_api_key(tmp_path, monkeypatch):
+    """--api без API-ключа → SystemExit."""
     monkeypatch.chdir(tmp_path)
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     monkeypatch.delenv("CLAUDE_API_KEY", raising=False)
     monkeypatch.delenv("POLZA_API_KEY", raising=False)
+    monkeypatch.delenv("AGENTFORGE_LLM_MODE", raising=False)
 
     from agentforge.cli import _run
 
     with pytest.raises(SystemExit):
-        _run("задача X", "context.yaml")
+        _run("задача X", "context.yaml", use_api=True)
+
+
+def test_run_prompt_mode_no_api_key_ok(tmp_path, monkeypatch):
+    """prompt-режим (по умолчанию) работает без API-ключа."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("CLAUDE_API_KEY", raising=False)
+    monkeypatch.delenv("POLZA_API_KEY", raising=False)
+    monkeypatch.delenv("AGENTFORGE_LLM_MODE", raising=False)
+
+    mock_report = MagicMock()
+    mock_report.summary.return_value = "ConsensusReport [test] — OK"
+
+    mock_coordinator = MagicMock()
+    mock_coordinator.run = AsyncMock(return_value=mock_report)
+
+    with patch("agentforge.kernel.app.AgentForgeApp") as MockApp, \
+         patch("agentforge.roles.scout.ScoutPlugin"), \
+         patch("agentforge.roles.architect.ArchitectPlugin"), \
+         patch("agentforge.roles.security.SecurityPlugin"), \
+         patch("agentforge.coordinator.Coordinator", return_value=mock_coordinator):
+        from agentforge.cli import _run
+        _run("задача X", "context.yaml", use_api=False)
+
+    mock_coordinator.run.assert_called_once_with("задача X")
 
 
 def test_run_with_mock_coordinator(tmp_path, monkeypatch):
@@ -70,13 +97,13 @@ def test_run_with_mock_coordinator(tmp_path, monkeypatch):
     mock_coordinator = MagicMock()
     mock_coordinator.run = AsyncMock(return_value=mock_report)
 
-    with patch("agentforge.kernel.app.AgentForgeApp"), \
+    with patch("agentforge.kernel.app.AgentForgeApp") as MockApp, \
          patch("agentforge.roles.scout.ScoutPlugin"), \
          patch("agentforge.roles.architect.ArchitectPlugin"), \
          patch("agentforge.roles.security.SecurityPlugin"), \
          patch("agentforge.coordinator.Coordinator", return_value=mock_coordinator):
         from agentforge.cli import _run
-        _run("задача X", "context.yaml")
+        _run("задача X", "context.yaml", use_api=True)
 
     mock_coordinator.run.assert_called_once_with("задача X")
 

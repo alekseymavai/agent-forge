@@ -64,11 +64,17 @@
 
 ---
 
-## LLM для ролей AgentForge
+## Режимы работы LLM
 
+По умолчанию — **prompt-режим**: роли генерируют промты, обработка через текущую сессию Claude Code.
+Внешний API-ключ не нужен.
+
+Для включения API-режима (по запросу Алексея):
 ```bash
-export ANTHROPIC_API_KEY=<ключ из менеджера секретов>
+export AGENTFORGE_LLM_MODE=api
+export ANTHROPIC_API_KEY=<ключ>
 export ANTHROPIC_BASE_URL=https://api.polza.ai
+agentforge run --task "..." --api
 ```
 
 ---

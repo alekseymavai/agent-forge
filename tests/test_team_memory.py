@@ -1,4 +1,4 @@
-"""test_team_memory.py — тесты TeamMemory (Integram devteam).
+"""test_team_memory.py — тесты TeamMemory (Integram agentforgememory).
 
 Два режима:
   1. Мок-режим (default) — httpx.AsyncMock, без реальной сети.
@@ -65,7 +65,6 @@ async def test_remember_pattern_returns_id(mem):
         obj_id = await mem.remember_pattern(
             name="RolePlugin вместо AgentBase",
             description="Plugin даёт lifecycle и DI из коробки",
-            project="AgentForge",
             tags="plugin, lifecycle, DI",
         )
     assert obj_id == 42
@@ -85,14 +84,12 @@ async def test_remember_pattern_sends_all_fields(mem):
             description="desc",
             context="ctx",
             example="code",
-            project="proj",
             tags="a, b",
         )
     fields = mock_call.call_args[0][1]["fields"]
     assert fields["context"] == "ctx"
     assert fields["example"] == "code"
     assert fields["tags"] == "a, b"
-    assert "created_at" in fields
 
 
 # ── remember_decision ─────────────────────────────────────────────────────────
@@ -108,12 +105,12 @@ async def test_remember_decision(mem):
             context="Нужна заменяемость ролей",
             decision="Role = RolePlugin из kernel, не AgentBase напрямую",
             consequences="AgentBase остаётся внутри плагина",
-            project="AgentForge",
             status="accepted",
         )
     assert obj_id == 10
     fields = mock_call.call_args[0][1]["fields"]
     assert fields["adr_id"] == "ADR-001"
+    assert fields["Название"] == "Role = RolePlugin"
     assert fields["status"] == "accepted"
     assert mock_call.call_args[0][1]["typeId"] == TABLE_DECISIONS
 
@@ -148,7 +145,6 @@ async def test_remember_lesson(mem):
             what_happened="Код запушен без лога — контекст потерян",
             what_learned="Лог сессии = часть коммита, не опционально",
             how_to_apply="Обновлять docs/session_*.md перед git push",
-            project="adsb18",
             severity="medium",
         )
     assert obj_id == 7
@@ -170,8 +166,8 @@ async def test_create_task(mem):
     assert obj_id == 55
     args = mock_call.call_args[0][1]
     assert args["typeId"] == TABLE_TASKS
-    assert args["fields"]["task_id"] == "abc123"
-    assert args["fields"]["status"] == "in_progress"
+    assert "abc123" in args["fields"]["Название"]
+    assert "AgentForge" in args["fields"]["Описание"]
 
 
 @pytest.mark.asyncio
@@ -295,7 +291,6 @@ async def test_integration_remember_and_recall():
         obj_id = await mem.remember_pattern(
             name="Integration test pattern",
             description="Создан автотестом test_team_memory",
-            project="AgentForge-test",
             tags="test, integration",
         )
         assert obj_id > 0

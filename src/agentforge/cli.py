@@ -2,8 +2,13 @@
 
 Команды:
   agentforge init <name>       — создать новый проект
-  agentforge run --task "..."  — запустить пайплайн Scout → Architect → Security
+  agentforge run --task "..."  — запустить пайплайн (по умолчанию prompt-режим)
+  agentforge run --task "..." --api  — запустить через внешний LLM API
   agentforge status            — статус задач из Team Memory
+
+Режимы LLM:
+  prompt (по умолчанию) — роли генерируют промты для обработки через Claude Code
+  api (--api или AGENTFORGE_LLM_MODE=api) — роли вызывают внешний LLM
 
 Требование Security: API-ключи только из os.environ, не из аргументов CLI.
 """
@@ -49,7 +54,7 @@ def _init(name: str) -> None:
 # ── run ───────────────────────────────────────────────────────────────────────
 
 
-async def _run_async(task: str, context_path: str) -> None:
+async def _run_async(task: str, context_path: str, use_api: bool = False) -> None:
     from agentforge.coordinator import Coordinator
     from agentforge.kernel.app import AgentForgeApp
     from agentforge.project_context import ProjectContext
@@ -57,20 +62,28 @@ async def _run_async(task: str, context_path: str) -> None:
     from agentforge.roles.scout import ScoutPlugin
     from agentforge.roles.security import SecurityPlugin
 
-    # API-ключ только из env (требование Security)
-    api_key = (
-        os.environ.get("ANTHROPIC_API_KEY")
-        or os.environ.get("CLAUDE_API_KEY")
-        or os.environ.get("POLZA_API_KEY")
-    )
-    if not api_key:
-        print(
-            "Ошибка: не задан API-ключ.\n"
-            "Установите переменную окружения:\n"
-            "  export ANTHROPIC_API_KEY=sk-ant-...",
-            file=sys.stderr,
+    # Определить режим: --api или env AGENTFORGE_LLM_MODE=api
+    llm_mode = "api" if use_api else os.environ.get("AGENTFORGE_LLM_MODE", "prompt")
+
+    if llm_mode == "api":
+        # API-ключ только из env (требование Security)
+        api_key = (
+            os.environ.get("ANTHROPIC_API_KEY")
+            or os.environ.get("CLAUDE_API_KEY")
+            or os.environ.get("POLZA_API_KEY")
         )
-        sys.exit(1)
+        if not api_key:
+            print(
+                "Ошибка: режим --api требует API-ключ.\n"
+                "Установите переменную окружения:\n"
+                "  export ANTHROPIC_API_KEY=sk-ant-...\n\n"
+                "Или запустите без --api для работы через Claude Code.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        print("Режим: API (внешний LLM)")
+    else:
+        print("Режим: prompt (обработка через Claude Code)")
 
     # Загрузить контекст проекта
     telos = task
@@ -82,6 +95,7 @@ async def _run_async(task: str, context_path: str) -> None:
 
     # Запустить пайплайн
     app = AgentForgeApp()
+    app.container.set("llm_mode", llm_mode)
     app.register(ScoutPlugin())
     app.register(ArchitectPlugin())
     app.register(SecurityPlugin())
@@ -94,8 +108,8 @@ async def _run_async(task: str, context_path: str) -> None:
     print("=" * 60 + "\n")
 
 
-def _run(task: str, context_path: str) -> None:
-    asyncio.run(_run_async(task, context_path))
+def _run(task: str, context_path: str, use_api: bool = False) -> None:
+    asyncio.run(_run_async(task, context_path, use_api))
 
 
 # ── status ────────────────────────────────────────────────────────────────────
@@ -151,6 +165,10 @@ def main() -> None:
     run_p.add_argument(
         "--context", default="context.yaml", help="путь к context.yaml (по умолчанию: ./context.yaml)"
     )
+    run_p.add_argument(
+        "--api", action="store_true",
+        help="использовать внешний LLM API (нужен ANTHROPIC_API_KEY)",
+    )
 
     # status
     subparsers.add_parser("status", help="статус задач из Team Memory")
@@ -160,7 +178,7 @@ def main() -> None:
     if args.command == "init":
         _init(args.name)
     elif args.command == "run":
-        _run(args.task, args.context)
+        _run(args.task, args.context, args.api)
     elif args.command == "status":
         _status()
     else:
