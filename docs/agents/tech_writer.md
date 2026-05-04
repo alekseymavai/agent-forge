@@ -60,9 +60,16 @@
 
 ### Шаг 4: Зафиксировать в памяти команды
 
-Новые паттерны → PATTERNS в agentforgememory.
-Новые уроки → LESSONS.
-Новые ADR → Архитектура_решений.
+Применяется **two-tier memory routing** (`docs/memory/two_tier_routing.md` —
+обязательное чтение перед closure фазы):
+
+- Методологические паттерны / уроки / антипаттерны → `agentforgememory`
+  (universal workspace, применимо в любом AF проекте)
+- Project-specific decisions, lessons, AF phase reports → project workspace
+  (`devteam` или эквивалент для конкретного проекта)
+
+Litmus-тест: "урок будет полезен в другом проекте?" → ДА = universal,
+НЕТ = project. При сомнении — project (downside меньше).
 
 ### Шаг 5: Составить ConsensusReport
 
@@ -80,6 +87,7 @@
 - **НЕ** пушить код без session-лога в том же коммите
 - **НЕ** пропускать обновление ARCHITECTURE.md при изменении архитектуры
 - **НЕ** забывать human_decision_required = True в ConsensusReport
+- **НЕ** писать урок в один workspace без проверки routing rule (см. Шаг 4)
 
 ---
 
@@ -89,7 +97,7 @@ Gift с полями:
 - `docs_updated` — список обновлённых документов
 - `consensus_report` — итоговый отчёт
 - `human_decision_required` — True (всегда)
-- `memory_updates` — что зафиксировано в памяти команды
+- `memory_updates` — что зафиксировано в памяти команды (с указанием workspace)
 
 ---
 
@@ -98,7 +106,14 @@ Gift с полями:
 - Session-лог обновлён
 - ARCHITECTURE.md актуален
 - ConsensusReport составлен
-- Память команды обновлена
+- Память команды обновлена с правильным routing (universal vs project)
+
+---
+
+## Связанное
+
+- `docs/memory/two_tier_routing.md` — routing rule для memory artifacts
+- `docs/team-protocol.md` — общий протокол команды
 
 ---
 
